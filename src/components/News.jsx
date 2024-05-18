@@ -1,5 +1,4 @@
 import { useState } from "react";
-import parse from "html-react-parser";
 import ReactTimeAgo from "react-time-ago";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
@@ -11,6 +10,8 @@ import {
 } from "react-icons/fa6";
 import Modal from "./Modal";
 
+TimeAgo.addDefaultLocale(en);
+
 const News = ({ allNews }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState("");
@@ -18,13 +19,6 @@ const News = ({ allNews }) => {
   const handleModal = (data) => {
     setModalOpen((prev) => !prev);
     setModalData(data);
-  };
-
-  TimeAgo.addDefaultLocale(en);
-
-  const getRandomAvatar = () => {
-    const number = Math.floor(Math.random() * (30 - 1) + 0);
-    return `https://xsgames.co/randomusers/assets/avatars/male/${number}.jpg`;
   };
 
   return (
@@ -38,7 +32,7 @@ const News = ({ allNews }) => {
             <a href="#" className="block shrink-0">
               <img
                 alt=""
-                src={getRandomAvatar()}
+                src={`https://xsgames.co/randomusers/assets/avatars/male/${id}.jpg`}
                 className="size-14 rounded-lg object-cover"
               />
             </a>
@@ -62,13 +56,13 @@ const News = ({ allNews }) => {
                   <>
                     <a
                       onClick={() => handleModal(newPost)}
-                      className="text-orange-500 hover:text-orange-300 transition-colors"
+                      className="text-orange-500 hover:text-orange-300 transition-colors cursor-pointer"
                       target="_blank"
                     >
                       {newPost.title}
                     </a>
-                    <span className="whitespace-nowrap rounded-full bg-purple-100 px-3 py-0 text-xs text-orange-600 ml-2">
-                      Show {<FaArrowUpRightFromSquare />}
+                    <span className="whitespace-nowrap rounded-full bg-orange-600 px-3 py-0 text-xs text-gray-100 ml-2">
+                      Post
                     </span>
                   </>
                 )}
@@ -109,23 +103,25 @@ const News = ({ allNews }) => {
 
           <div className="flex justify-end p-2 pt-0">
             {newPost.url ? (
-              <button
-                type="submit"
-                className="inline-flex items-center py-1.5 px-3 ml-2 text-sm font-medium text-white bg-orange-700 rounded-lg border border-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800"
-              >
+              <button className="inline-flex items-center py-1.5 px-3 ml-2 text-sm font-medium text-white bg-orange-700 rounded-lg border border-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">
                 Go To Page
               </button>
             ) : (
               <button
-                type="submit"
+                onClick={() => handleModal(newPost)}
                 className="inline-flex items-center py-1.5 px-3 ml-2 text-sm font-medium text-white bg-orange-700 rounded-lg border border-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800"
               >
                 Read More
               </button>
             )}
           </div>
-          {modalOpen && modalData && (
-            <Modal modalOpen={modalOpen} data={modalData} />
+
+          {!newPost.url && modalOpen && modalData && (
+            <Modal
+              modalOpen={modalOpen}
+              data={modalData}
+              handleModal={handleModal}
+            />
           )}
         </article>
       ))}
